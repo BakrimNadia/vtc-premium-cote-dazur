@@ -10,7 +10,7 @@ const services = [
     title: "Trajets privés & professionnels",
     description:
       "Déplacements élégants pour rendez-vous d’affaires, hôtels, restaurants, événements privés ou trajets du quotidien sur la Côte d’Azur.",
-    image: "/images/service-prive-premium.jpg",
+    image: "/images/trajet.png",
     icon: Briefcase,
     badge: "Service premium",
   },
@@ -18,7 +18,7 @@ const services = [
     title: "Transferts aéroports & gares",
     description:
       "Prise en charge soignée vers ou depuis les aéroports et gares, avec ponctualité, confort et sérénité pour vos arrivées et départs.",
-    image: "/images/service-aeroport-gare.jpg",
+    image: "/images/aeroport.png",
     icon: Plane,
     badge: "Ponctualité & confort",
   },
@@ -26,7 +26,7 @@ const services = [
     title: "Trajets hors département",
     description:
       "Déplacements longue distance sur réservation vers d’autres villes et régions, avec une expérience haut de gamme pensée pour voyager sereinement.",
-    image: "/images/service-longue-distance.jpg",
+    image: "/images/route.png",
     icon: Route,
     badge: "Longue distance",
   },

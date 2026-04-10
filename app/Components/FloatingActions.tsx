@@ -40,7 +40,7 @@ export default function FloatingActions({
   )}`;
 
   return (
-    <div className="pointer-events-none fixed bottom-4 left-4 z-[80] sm:bottom-6 sm:left-6">
+    <div className="pointer-events-none fixed bottom-4 right-4 z-[80] sm:bottom-6 sm:right-6">
       <AnimatePresence>
         {isVisible && (
           <motion.div

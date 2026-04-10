@@ -114,7 +114,7 @@ export default function Contact() {
                   className="relative h-[320px] w-full sm:h-[420px] lg:h-[500px]"
                 >
                   <Image
-                    src="/images/contact-vtc-premium.jpg"
+                    src="/images/contact.png"
                     alt="Illustration premium réservation VTC"
                     fill
                     className="object-cover"

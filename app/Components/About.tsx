@@ -87,7 +87,7 @@ export default function About() {
                 className="relative h-[380px] w-full sm:h-[460px] lg:h-[620px]"
               >
                 <Image
-                  src="/images/about-vtc-cote-azur.jpg"
+                  src="/images/about.png"
                   alt="Vue premium de la Côte d’Azur"
                   fill
                   className="object-cover"

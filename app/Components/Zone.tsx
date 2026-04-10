@@ -187,8 +187,11 @@ export default function Zone() {
               </span>
               .
             </motion.p>
+          </motion.div>
+        </div>
+      </div>
 
-            <div className="mt-8 grid gap-4 sm:grid-cols-2">
+                  <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {highlights.map((item, index) => {
                 const Icon = item.icon;
 
@@ -220,9 +223,8 @@ export default function Zone() {
                 );
               })}
             </div>
-          </motion.div>
-        </div>
-      </div>
     </section>
+
+    
   );
 }
