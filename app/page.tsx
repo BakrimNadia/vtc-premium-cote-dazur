@@ -1,6 +1,7 @@
 import Navbar from "./Components/Navbar";
 import HeroPremium from "./Components/Hero";
 import About from "./Components/About";
+import Services from "./Components/Services";
 
 export default function Home() {
   return (
@@ -8,12 +9,8 @@ export default function Home() {
       <Navbar />
       <HeroPremium />
       <About />
-
-      <section id="services" className="min-h-screen px-4 py-24 text-white">
-        <div className="mx-auto max-w-7xl">
-          <h2 className="text-3xl font-semibold">Services</h2>
-        </div>
-      </section>
+      <Services />
+     
 
       <section id="zones" className="min-h-screen px-4 py-24 text-white">
         <div className="mx-auto max-w-7xl">
