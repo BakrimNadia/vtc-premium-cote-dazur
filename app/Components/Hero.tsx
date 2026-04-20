@@ -82,22 +82,29 @@ export default function Hero() {
               </span>
             </motion.div>
 
-            <motion.h1
-              variants={titleContainer}
-              initial="hidden"
-              animate="show"
-              className="max-w-4xl text-4xl font-semibold leading-tight text-white sm:text-5xl lg:text-7xl"
-            >
-              {title.split("").map((char, index) => (
-                <motion.span
-                  key={`${char}-${index}`}
-                  variants={letterVariant}
-                  className="inline-block"
-                >
-                  {char === " " ? "\u00A0" : char}
-                </motion.span>
-              ))}
-            </motion.h1>
+<motion.h1
+  variants={titleContainer}
+  initial="hidden"
+  animate="show"
+  className="max-w-4xl text-4xl font-semibold leading-tight text-white sm:text-5xl lg:text-7xl"
+>
+  {title.split(" ").map((word, wordIndex) => (
+    <span
+      key={`${word}-${wordIndex}`}
+      className="mr-[0.28em] inline-block whitespace-nowrap"
+    >
+      {word.split("").map((char, charIndex) => (
+        <motion.span
+          key={`${wordIndex}-${charIndex}`}
+          variants={letterVariant}
+          className="inline-block"
+        >
+          {char}
+        </motion.span>
+      ))}
+    </span>
+  ))}
+</motion.h1>
 
             <motion.p
               variants={fadeUp}

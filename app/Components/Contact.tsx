@@ -14,7 +14,7 @@ import {
   User,
   CarFront,
 } from "lucide-react";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 const infos = [
   {
@@ -38,6 +38,127 @@ const infos = [
 ];
 
 export default function Contact() {
+  const [contactForm, setContactForm] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    message: "",
+  });
+
+  const [reservationForm, setReservationForm] = useState({
+    departure: "",
+    destination: "",
+    date: "",
+    time: "",
+    name: "",
+    phone: "",
+    details: "",
+  });
+
+  const [contactLoading, setContactLoading] = useState(false);
+  const [reservationLoading, setReservationLoading] = useState(false);
+  const [contactStatus, setContactStatus] = useState<string | null>(null);
+  const [reservationStatus, setReservationStatus] = useState<string | null>(
+    null
+  );
+
+  const handleContactChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setContactForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleReservationChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setReservationForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleContactSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setContactLoading(true);
+    setContactStatus(null);
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          formType: "contact",
+          ...contactForm,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Erreur lors de l'envoi.");
+      }
+
+      setContactStatus("Message envoyé avec succès.");
+      setContactForm({
+        name: "",
+        phone: "",
+        email: "",
+        message: "",
+      });
+    } catch (error) {
+      setContactStatus(
+        error instanceof Error ? error.message : "Une erreur est survenue."
+      );
+    } finally {
+      setContactLoading(false);
+    }
+  };
+
+  const handleReservationSubmit = async (
+    e: React.FormEvent<HTMLFormElement>
+  ) => {
+    e.preventDefault();
+    setReservationLoading(true);
+    setReservationStatus(null);
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          formType: "reservation",
+          ...reservationForm,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Erreur lors de l'envoi.");
+      }
+
+      setReservationStatus("Demande de réservation envoyée avec succès.");
+      setReservationForm({
+        departure: "",
+        destination: "",
+        date: "",
+        time: "",
+        name: "",
+        phone: "",
+        details: "",
+      });
+    } catch (error) {
+      setReservationStatus(
+        error instanceof Error ? error.message : "Une erreur est survenue."
+      );
+    } finally {
+      setReservationLoading(false);
+    }
+  };
+
   const imageRef = useRef<HTMLDivElement | null>(null);
 
   const { scrollYProgress } = useScroll({
@@ -202,16 +323,19 @@ export default function Contact() {
                 </div>
               </div>
 
-              <form className="grid gap-4 sm:grid-cols-2">
+              <form onSubmit={handleContactSubmit} className="grid gap-4 sm:grid-cols-2">
                 <div className="sm:col-span-1">
                   <label className="mb-2 block text-sm text-white/75">Nom</label>
                   <div className="relative">
                     <User className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/35" />
                     <input
-                      type="text"
-                      placeholder="Votre nom"
-                      className="w-full rounded-2xl border border-white/10 bg-black/20 py-4 pl-11 pr-4 text-sm text-white placeholder:text-white/35 outline-none transition focus:border-[#D4AF37]/40 focus:bg-black/30"
-                    />
+  type="text"
+  name="name"
+  value={contactForm.name}
+  onChange={handleContactChange}
+  placeholder="Votre nom"
+  className="w-full rounded-2xl border border-white/10 bg-black/20 py-4 pl-11 pr-4 text-sm text-white placeholder:text-white/35 outline-none transition focus:border-[#D4AF37]/40 focus:bg-black/30"
+/>
                   </div>
                 </div>
 
@@ -220,10 +344,13 @@ export default function Contact() {
                   <div className="relative">
                     <Phone className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/35" />
                     <input
-                      type="tel"
-                      placeholder="Votre numéro"
-                      className="w-full rounded-2xl border border-white/10 bg-black/20 py-4 pl-11 pr-4 text-sm text-white placeholder:text-white/35 outline-none transition focus:border-[#D4AF37]/40 focus:bg-black/30"
-                    />
+  type="tel"
+  name="phone"
+  value={contactForm.phone}
+  onChange={handleContactChange}
+  placeholder="Votre numéro"
+  className="w-full rounded-2xl border border-white/10 bg-black/20 py-4 pl-11 pr-4 text-sm text-white placeholder:text-white/35 outline-none transition focus:border-[#D4AF37]/40 focus:bg-black/30"
+/>
                   </div>
                 </div>
 
@@ -231,31 +358,42 @@ export default function Contact() {
                   <label className="mb-2 block text-sm text-white/75">Email</label>
                   <div className="relative">
                     <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/35" />
-                    <input
-                      type="email"
-                      placeholder="Votre adresse email"
-                      className="w-full rounded-2xl border border-white/10 bg-black/20 py-4 pl-11 pr-4 text-sm text-white placeholder:text-white/35 outline-none transition focus:border-[#D4AF37]/40 focus:bg-black/30"
-                    />
+<input
+  type="email"
+  name="email"
+  value={contactForm.email}
+  onChange={handleContactChange}
+  placeholder="Votre adresse email"
+  className="w-full rounded-2xl border border-white/10 bg-black/20 py-4 pl-11 pr-4 text-sm text-white placeholder:text-white/35 outline-none transition focus:border-[#D4AF37]/40 focus:bg-black/30"
+/>
                   </div>
                 </div>
 
                 <div className="sm:col-span-2">
                   <label className="mb-2 block text-sm text-white/75">Message</label>
                   <textarea
-                    rows={5}
-                    placeholder="Décrivez votre demande..."
-                    className="w-full rounded-[1.5rem] border border-white/10 bg-black/20 px-4 py-4 text-sm text-white placeholder:text-white/35 outline-none transition focus:border-[#D4AF37]/40 focus:bg-black/30"
-                  />
+  rows={5}
+  name="message"
+  value={contactForm.message}
+  onChange={handleContactChange}
+  placeholder="Décrivez votre demande..."
+  className="w-full rounded-[1.5rem] border border-white/10 bg-black/20 px-4 py-4 text-sm text-white placeholder:text-white/35 outline-none transition focus:border-[#D4AF37]/40 focus:bg-black/30"
+/>
                 </div>
 
                 <div className="sm:col-span-2">
                   <button
-                    type="submit"
-                    className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#D4AF37] px-6 py-4 text-sm font-semibold text-black transition duration-300 hover:scale-[1.01] hover:bg-[#e2bd4a]"
-                  >
-                    <Send className="h-4 w-4" />
-                    Envoyer ma demande
-                  </button>
+  type="submit"
+  disabled={contactLoading}
+  className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#D4AF37] px-6 py-4 text-sm font-semibold text-black transition duration-300 hover:scale-[1.01] hover:bg-[#e2bd4a] disabled:cursor-not-allowed disabled:opacity-70"
+>
+  <Send className="h-4 w-4" />
+  {contactLoading ? "Envoi en cours..." : "Envoyer ma demande"}
+</button>
+
+{contactStatus && (
+  <p className="sm:col-span-2 text-sm text-white/75">{contactStatus}</p>
+)}
                 </div>
               </form>
             </div>
@@ -276,17 +414,20 @@ export default function Contact() {
                 </div>
               </div>
 
-              <form className="grid gap-4 sm:grid-cols-2">
+              <form onSubmit={handleReservationSubmit} className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <label className="mb-2 block text-sm text-white/75">Lieu de départ</label>
                   <div className="relative">
                     <MapPin className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/35" />
-                    <input
-                      type="text"
-                      title="Lieu de départ"
-                      placeholder="Ex : Nice Aéroport"
-                      className="w-full rounded-2xl border border-white/10 bg-black/20 py-4 pl-11 pr-4 text-sm text-white placeholder:text-white/35 outline-none transition focus:border-[#D4AF37]/40 focus:bg-black/30"
-                    />
+                   <input
+  type="text"
+  name="departure"
+  value={reservationForm.departure}
+  onChange={handleReservationChange}
+  title="Lieu de départ"
+  placeholder="Ex : Nice Aéroport"
+  className="w-full rounded-2xl border border-white/10 bg-black/20 py-4 pl-11 pr-4 text-sm text-white placeholder:text-white/35 outline-none transition focus:border-[#D4AF37]/40 focus:bg-black/30"
+/>
                   </div>
                 </div>
 
@@ -294,12 +435,15 @@ export default function Contact() {
                   <label className="mb-2 block text-sm text-white/75">Destination</label>
                   <div className="relative">
                     <MapPin className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/35" />
-                    <input
-                      type="text"
-                      title="Destination"
-                      placeholder="Ex : Monaco"
-                      className="w-full rounded-2xl border border-white/10 bg-black/20 py-4 pl-11 pr-4 text-sm text-white placeholder:text-white/35 outline-none transition focus:border-[#D4AF37]/40 focus:bg-black/30"
-                    />
+                   <input
+  type="text"
+  name="destination"
+  value={reservationForm.destination}
+  onChange={handleReservationChange}
+  title="Destination"
+  placeholder="Ex : Monaco"
+  className="w-full rounded-2xl border border-white/10 bg-black/20 py-4 pl-11 pr-4 text-sm text-white placeholder:text-white/35 outline-none transition focus:border-[#D4AF37]/40 focus:bg-black/30"
+/>
                   </div>
                 </div>
 
@@ -308,11 +452,13 @@ export default function Contact() {
                   <div className="relative">
                     <CalendarDays className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/35" />
                     <input
-                      type="date"
-                      title="Sélectionnez une date"
-                      placeholder="Sélectionnez une date"
-                      className="w-full rounded-2xl border border-white/10 bg-black/20 py-4 pl-11 pr-4 text-sm text-white outline-none transition focus:border-[#D4AF37]/40 focus:bg-black/30"
-                    />
+  type="date"
+  name="date"
+  value={reservationForm.date}
+  onChange={handleReservationChange}
+  title="Sélectionnez une date"
+  className="w-full rounded-2xl border border-white/10 bg-black/20 py-4 pl-11 pr-4 text-sm text-white outline-none transition focus:border-[#D4AF37]/40 focus:bg-black/30"
+/>
                   </div>
                 </div>
 
@@ -320,12 +466,14 @@ export default function Contact() {
                   <label className="mb-2 block text-sm text-white/75">Heure</label>
                   <div className="relative">
                     <Clock3 className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/35" />
-                    <input
-                      type="time"
-                      title="Sélectionnez une heure"
-                      placeholder="Sélectionnez une heure"
-                      className="w-full rounded-2xl border border-white/10 bg-black/20 py-4 pl-11 pr-4 text-sm text-white outline-none transition focus:border-[#D4AF37]/40 focus:bg-black/30"
-                    />
+                   <input
+  type="time"
+  name="time"
+  value={reservationForm.time}
+  onChange={handleReservationChange}
+  title="Sélectionnez une heure"
+  className="w-full rounded-2xl border border-white/10 bg-black/20 py-4 pl-11 pr-4 text-sm text-white outline-none transition focus:border-[#D4AF37]/40 focus:bg-black/30"
+/>
                   </div>
                 </div>
 
@@ -334,11 +482,14 @@ export default function Contact() {
                   <div className="relative">
                     <User className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/35" />
                     <input
-                      type="text"
-                      title="Votre nom"
-                      placeholder="Votre nom"
-                      className="w-full rounded-2xl border border-white/10 bg-black/20 py-4 pl-11 pr-4 text-sm text-white placeholder:text-white/35 outline-none transition focus:border-[#D4AF37]/40 focus:bg-black/30"
-                    />
+  type="text"
+  name="name"
+  value={reservationForm.name}
+  onChange={handleReservationChange}
+  title="Votre nom"
+  placeholder="Votre nom"
+  className="w-full rounded-2xl border border-white/10 bg-black/20 py-4 pl-11 pr-4 text-sm text-white placeholder:text-white/35 outline-none transition focus:border-[#D4AF37]/40 focus:bg-black/30"
+/>
                   </div>
                 </div>
 
@@ -347,21 +498,27 @@ export default function Contact() {
                   <div className="relative">
                     <Phone className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/35" />
                     <input
-                      type="tel"
-                      title="Votre numéro de téléphone"
-                      placeholder="Votre numéro"
-                      className="w-full rounded-2xl border border-white/10 bg-black/20 py-4 pl-11 pr-4 text-sm text-white placeholder:text-white/35 outline-none transition focus:border-[#D4AF37]/40 focus:bg-black/30"
-                    />
+  type="tel"
+  name="phone"
+  value={reservationForm.phone}
+  onChange={handleReservationChange}
+  title="Votre numéro de téléphone"
+  placeholder="Votre numéro"
+  className="w-full rounded-2xl border border-white/10 bg-black/20 py-4 pl-11 pr-4 text-sm text-white placeholder:text-white/35 outline-none transition focus:border-[#D4AF37]/40 focus:bg-black/30"
+/>
                   </div>
                 </div>
 
                 <div className="sm:col-span-2">
                   <label className="mb-2 block text-sm text-white/75">Informations complémentaires</label>
-                  <textarea
-                    rows={4}
-                    placeholder="Bagages, nombre de passagers, précision sur le trajet..."
-                    className="w-full rounded-[1.5rem] border border-white/10 bg-black/20 px-4 py-4 text-sm text-white placeholder:text-white/35 outline-none transition focus:border-[#D4AF37]/40 focus:bg-black/30"
-                  />
+                 <textarea
+  rows={4}
+  name="details"
+  value={reservationForm.details}
+  onChange={handleReservationChange}
+  placeholder="Bagages, nombre de passagers, précision sur le trajet..."
+  className="w-full rounded-[1.5rem] border border-white/10 bg-black/20 px-4 py-4 text-sm text-white placeholder:text-white/35 outline-none transition focus:border-[#D4AF37]/40 focus:bg-black/30"
+/>
                 </div>
 
                 <div className="sm:col-span-2 grid gap-3 sm:grid-cols-3">
@@ -388,13 +545,18 @@ export default function Contact() {
                 </div>
 
                 <div className="sm:col-span-2">
-                  <button
-                    type="submit"
-                    className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#D4AF37] px-6 py-4 text-sm font-semibold text-black transition duration-300 hover:scale-[1.01] hover:bg-[#e2bd4a]"
-                  >
-                    <CalendarDays className="h-4 w-4" />
-                    Demander une réservation
-                  </button>
+                 <button
+  type="submit"
+  disabled={reservationLoading}
+  className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#D4AF37] px-6 py-4 text-sm font-semibold text-black transition duration-300 hover:scale-[1.01] hover:bg-[#e2bd4a] disabled:cursor-not-allowed disabled:opacity-70"
+>
+  <CalendarDays className="h-4 w-4" />
+  {reservationLoading ? "Envoi en cours..." : "Demander une réservation"}
+</button>
+
+{reservationStatus && (
+  <p className="sm:col-span-2 text-sm text-white/75">{reservationStatus}</p>
+)}
                 </div>
               </form>
             </div>
